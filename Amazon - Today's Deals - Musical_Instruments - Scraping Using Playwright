@@ -1,0 +1,159 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
+import asyncio
+import pandas as pd
+from playwright.async_api import async_playwright
+
+
+async def get_product_name(page):
+    try:
+        product_name = await (await page.query_selector("#productTitle")).text_content()
+    except:
+        product_name = "Not Available"
+    return product_name
+
+
+async def get_brand(page):
+    try:
+        brand = "Brand"  
+    except:
+        brand = "Not Available"
+    return brand
+
+
+async def get_star_rating(page):
+    try:
+        star_rating = await (await page.query_selector(".a-icon-alt")).text_content()
+        star_rating = star_rating.split(" ")[0]
+    except:
+        star_rating = "Not Available"
+    return star_rating
+
+
+async def get_num_ratings(page):
+    try:
+        ratings_text = await (await page.query_selector("#acrCustomerReviewText")).text_content()
+        num_ratings = ratings_text.split(" ")[0]
+    except:
+        num_ratings = "Not Available"
+    return
+
+
+async def get_original_price(page):
+    try:
+        original_price = await (await page.query_selector(".a-price.a-text-price")).text_content()
+        original_price = original_price.split("₹")[1]
+    except:
+        original_price = "Not Available"
+    return original_price
+
+
+async def get_offer_price(page):
+    try:
+        offer_price = await (await page.query_selector(".a-price-whole")).text_content()
+    except:
+        offer_price = "Not Available"
+    return offer_price
+
+
+async def get_brand(page):
+    try:
+        brand = await (await page.query_selector("tr.po-brand td span.po-break-word")).text_content()
+    except:
+        brand = "Not Available"
+    return brand
+
+
+async def get_color(page):
+    try:
+        color = await (await page.query_selector("tr.po-color td span.po-break-word")).text_content()
+    except:
+        color = "Not Available"
+    return color
+
+
+async def get_size(page):
+    try:
+        size = await (await page.query_selector("tr.po-size td span.po-break-word")).text_content()
+    except:
+        size = "Not Available"
+    return size
+
+
+async def get_material(page):
+    try:
+        material = await (await page.query_selector("tr.po-back.material td span.po-break-word")).text_content()
+    except:
+        material = "Not Available"
+    return material
+
+
+async def get_connectivity_technology(page):
+    try:
+        connectivity_technology = await (await page.query_selector("tr.po-connectivity_technology td span.po-break-word")).text_content()
+    except:
+        connectivity_technology = "Not Available"
+    return connectivity_technology
+
+
+async def get_connector_type(page):
+    try:
+        connector_type = await (await page.query_selector("tr.po-connector_type td span.po-break-word")).text_content()
+    except:
+        connector_type = "Not Available"
+    return connector_type
+
+
+async def get_compatible_devices(page):
+    try:
+        compatible_devices = await (await page.query_selector("tr.po-compatible_devices td span.po-break-word")).text_content()
+    except:
+        compatible_devices = "Not Available"
+    return compatible_devices
+
+
+
+async def main():
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch()
+        page = await browser.new_page()
+        await page.goto('https://www.amazon.in/gp/goldbox?deals-widget=%257B%2522version%2522%253A1%252C%2522viewIndex%2522%253A0%252C%2522presetId%2522%253A%252215C82F45284EDD496F94A2C368D1B4BD%2522%252C%2522sorting%2522%253A%2522BY_SCORE%2522%257D')
+
+        all_items = await page.query_selector_all('.a-link-normal.DealCardDynamic-module__linkOutlineOffset_2XU8RDGmNg2HG1E-ESseNq')
+        product_links = []
+        for item in all_items:
+            link = await item.get_attribute('href')
+            product_links.append(link)
+
+        data = []
+        for link in product_links:
+            await page.goto(link)
+            product_name = await get_product_name(page)
+            brand = await get_brand(page)
+            star_rating = await get_star_rating(page)
+            num_ratings = await get_num_ratings(page)
+            original_price = await get_original_price(page)
+            offer_price = await get_offer_price(page)
+            brand = await get_brand(page)
+            color = await get_color(page)
+            size = await get_size(page)
+            material = await get_material(page)
+            connectivity_technology = await get_connectivity_technology(page)
+            connector_type = await get_connector_type(page)
+            compatible_devices = await get_compatible_devices(page)
+            data.append((link, product_name, brand, star_rating, num_ratings, original_price, offer_price,  color, size, material, connectivity_technology, connector_type, compatible_devices))
+
+        df = pd.DataFrame(data, columns=['Product Link', 'Product Name', 'Brand', 'Star Rating', 'Number of Ratings', 'Original Price', 'Offer Price', 'Color', 'Size', 'Material', 'Connectivity_technology', 'Connector_type', 'Compatible_devices'])
+        df.to_csv('product_details.csv', index=False)
+
+        print('CSV file has been written successfully.')
+        await browser.close()        
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
