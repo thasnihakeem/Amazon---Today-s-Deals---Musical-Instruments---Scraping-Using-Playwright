@@ -231,10 +231,12 @@ async def main():
             
             
             # Add the extracted data to the list
-            data.append((link, product_name, brand, star_rating, num_ratings, original_price, offer_price, color, size, material, connectivity_technology, connector_type, compatible_devices))
+            data.append((link, product_name, brand, star_rating, num_ratings, original_price, offer_price, color,
+                         size, material, connectivity_technology, connector_type, compatible_devices))
 
         # Create a pandas dataframe from the extracted data
-        df = pd.DataFrame(data, columns=['Product Link', 'Product Name', 'Brand', 'Star Rating', 'Number of Ratings', 'Original Price', 'Offer Price', 'Color', 'Size', 'Material', 'Connectivity_technology', 'Connector_type', 'Compatible_devices'])
+        df = pd.DataFrame(data, columns=['Product Link', 'Product Name', 'Brand', 'Star Rating', 'Number of Ratings', 'Original Price', 'Offer Price', 
+                                         'Color', 'Size', 'Material', 'Connectivity_technology', 'Connector_type', 'Compatible_devices'])
         # Save the data to a CSV file
         df.to_csv('product_details5.csv', index=False)
 
