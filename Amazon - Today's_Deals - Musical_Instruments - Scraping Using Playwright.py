@@ -181,7 +181,7 @@ async def main():
         # Open a new page in the browser
         page = await browser.new_page()
         # Navigate to the Amazon deal page
-        await page.goto('https://www.amazon.in/gp/goldbox?deals-widget=%257B%2522version%2522%253A1%252C%2522viewIndex%2522%253A0%252C%2522presetId%2522%253A%252215C82F45284EDD496F94A2C368D1B4BD%2522%252C%2522sorting%2522%253A%2522BY_SCORE%2522%257D')
+        await perform_request_with_retry(page, 'https://www.amazon.in/gp/goldbox?deals-widget=%257B%2522version%2522%253A1%252C%2522viewIndex%2522%253A0%252C%2522presetId%2522%253A%252215C82F45284EDD496F94A2C368D1B4BD%2522%252C%2522sorting%2522%253A%2522BY_SCORE%2522%257D')
         # Get the links to each product
         product_links = await get_product_links(page)
 
