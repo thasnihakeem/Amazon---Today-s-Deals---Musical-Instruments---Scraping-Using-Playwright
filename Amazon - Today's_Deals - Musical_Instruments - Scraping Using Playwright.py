@@ -26,7 +26,7 @@ async def perform_request_with_retry(page, link):
             
 # Function to extract the product links
 async def get_product_links(page):
-    # Select all elements with class '.a-link-normal.DealCardDynamic-module__linkOutlineOffset_2XU8RDGmNg2HG1E-ESseNq'
+    # Select all elements
     all_items = await page.query_selector_all('.a-link-normal.DealCardDynamic-module__linkOutlineOffset_2XU8RDGmNg2HG1E-ESseNq')
     product_links = []
     # Loop through each item and extract the href attribute
